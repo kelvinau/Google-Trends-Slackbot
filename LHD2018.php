@@ -20,8 +20,9 @@ function setUnknownText(&$text) {
   $text = 'Sorry. I do not understand.';
 }
 
-function send($response) {
+function send($response, $response_text) {
   global $authorization;
+  $response['text'] = $response_text;
   $json_string = json_encode($response);
 
   $slack_call = curl_init('https://slack.com/api/chat.postMessage');
@@ -91,8 +92,8 @@ if ($params) {
       }
       // no convo
       else {
-        if (strExists($user_msg, 'interesting')) {
-          $response_text = 'I have a list of interesting items. Which one do you want to know?';
+        if (strExists($user_msg, 'top trend')) {
+          $response_text = 'I have a list of top trending items from Google search. Which one do you want to know?';
           $conversation["bot"] = $response_text;
           $stmt = $conn->prepare("INSERT INTO `${table}` (`channel`, `user`, `conversation`) VALUES (?,?,?)");
 
@@ -102,30 +103,25 @@ if ($params) {
           false && $stmt->execute();
 
           // select options
+          $content = file_get_contents('data/mapping.json');
+
+          $mapping = json_decode($content, true);
+
           $response = array_merge($response, [
               "response_type" => "in_channel",
               "attachments" => [
                   [
-                      "text" => "Choose a game to play",
-                      "fallback" => "If you could read this message, you'd be choosing something fun to do right now.",
+                      "text" => "Choose an item",
+                      "fallback" => "If you could read this message, you'd be choosing something fun to read right now.",
                       "color" => "#3AA3E3",
                       "attachment_type" => "default",
-                      "callback_id" => "game_selection",
+                      "callback_id" => "trend_selection",
                       "actions" => [
                           [
                               "name" => "games_list",
-                              "text" => "Pick a game...",
+                              "text" => "Pick an item...",
                               "type" => "select",
-                              "options" =>[
-                                  [
-                                      "text" => "Hearts",
-                                      "value" => "hearts"
-                                  ],
-                                  [
-                                      "text" => "Bridge",
-                                      "value" => "bridge"
-                                  ],
-                              ]
+                              "options" => $mapping,
                           ]
                       ]
                   ]
@@ -143,7 +139,7 @@ if ($params) {
     }
   }
 
-  send($response);
+  send($response, $response_text);
 }
 // interactive_message
 else if ($slack_request) {
@@ -174,7 +170,7 @@ else if ($slack_request) {
 
 
 
-  $response["text"] = $response_text;
+
 
 
 
@@ -205,5 +201,5 @@ else if ($slack_request) {
 
 
 
-  send($response);
+  send($response, $response_text);
 }
