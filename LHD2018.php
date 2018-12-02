@@ -10,7 +10,7 @@ function logToFile($msg) {
 $slack_request = file_get_contents('php://input');
 $params = json_decode($slack_request, true);
 
-//logToFile($slack_request);
+
 
 function strExists($string, $search) {
   return strpos( strtolower($string), $search ) !== false;
@@ -73,133 +73,90 @@ if ($params) {
       $response_text = 'hello!';
     }
     else {
-      $conn = new mysqli($CONFIG['DB_SERVER'], $CONFIG['DB_ADMIN'], $CONFIG['DB_PASSWORD'], $CONFIG['DB_NAME']);
 
-      $table = $CONFIG['DB_TABLE'];
-      $stmt = $conn->prepare("SELECT `conversation` FROM `${table}` WHERE channel = ? AND user = ?");
 
-      $stmt->bind_param("ss", $channel, $user);
-      $stmt->execute();
-      $stmt->bind_result($result);
-      $stmt->fetch();
-      $stmt->close();
-
-      // json string
-      // has convo
-      // TODO: REMOVE THIS
-      if(false && $result) {
-        $response_text = 'has convo';
-      }
-      // no convo
-      else {
         if (strExists($user_msg, 'top trend')) {
-          $response_text = 'I have a list of top trending items from Google search. Which one do you want to know?';
-          $conversation["bot"] = $response_text;
-          $stmt = $conn->prepare("INSERT INTO `${table}` (`channel`, `user`, `conversation`) VALUES (?,?,?)");
 
-          $json = json_encode($conversation);
-          $stmt->bind_param("sss", $channel, $user, $json);
-          // TODO: REMOVE THIS
-          false && $stmt->execute();
+        $conn = new mysqli($CONFIG['DB_SERVER'], $CONFIG['DB_ADMIN'], $CONFIG['DB_PASSWORD'], $CONFIG['DB_NAME']);
 
-          // select options
-          $content = file_get_contents('data/mapping.json');
+        $table = $CONFIG['DB_TABLE'];
+        $stmt = $conn->prepare("SELECT `conversation` FROM `${table}` WHERE channel = ? AND user = ?");
 
-          $mapping = json_decode($content, true);
+        $stmt->bind_param("ss", $channel, $user);
+        $stmt->execute();
+        $stmt->bind_result($result);
+        $stmt->fetch();
+        $stmt->close();
 
-          $response = array_merge($response, [
-              "response_type" => "in_channel",
-              "attachments" => [
-                  [
-                      "text" => "Choose an item",
-                      "fallback" => "If you could read this message, you'd be choosing something fun to read right now.",
-                      "color" => "#3AA3E3",
-                      "attachment_type" => "default",
-                      "callback_id" => "trend_selection",
-                      "actions" => [
-                          [
-                              "name" => "games_list",
-                              "text" => "Pick an item...",
-                              "type" => "select",
-                              "options" => $mapping,
-                          ]
-                      ]
-                  ]
-                ]
-              ]
-            );
-
-
-
+        // json string
+        // has responsed_trend
+        if($result) {
+          $responded_trend = json_decode($result, true);
         }
         else {
-          setUnknownText($response_text);
+          $responded_trend = [];
         }
+
+        // select options
+        $content = file_get_contents('data/mapping.json');
+
+        $mapping = json_decode($content, true);
+
+        $found = false;
+        foreach ($mapping as $item) {
+          if (!array_key_exists($item['text'], $responded_trend)) {
+            $responded_trend[$item['text']] = 1;
+            $found = true;
+            break;
+          }
+        }
+
+        if ($found) {
+          $json = json_encode($responded_trend);
+          $stmt = $conn->prepare(
+            "INSERT INTO `${table}` (`channel`, `user`, `conversation`) VALUES (?,?,?)
+            ON DUPLICATE KEY UPDATE `conversation` = VALUES(`conversation`)"
+          );
+          $stmt->bind_param("sss", $channel, $user, $json);
+          $stmt->execute();
+          $response_text = 'found one';
+        }
+        else {
+          $response_text = 'Sorry I do not have any more new trends result at this moment';
+        }
+
+
       }
+      else {
+        setUnknownText($response_text);
+      }
+
     }
   }
 
   send($response, $response_text);
 }
-// interactive_message
-else if ($slack_request) {
 
+// // WIDTH IS TOO SHORT - CAN'T USE INTERACTIVE MESSAGE
+// // interactive_message
+// else if ($slack_request) {
 
+//   $params = urldecode($slack_request);
+//   $json = substr($params, 8, strlen($params));
+//   $params = json_decode($json, true);
 
+//   $response = [
+//     "username" => "Smart Bot",
+//     "channel" => $params["channel"]["id"],
+//   ];
 
+//   if ($params['type'] === 'interactive_message') {
+//     $response_text = 'here';
+//   }
+//   // other type
+//   else {
+//     setUnknownText($response_text);
+//   }
 
-  $params = urldecode($slack_request);
-  $json = substr($params, 8, strlen($params));
-  $params = json_decode($json, true);
-
-  $response = [
-    "username" => "Smart Bot",
-    "channel" => $params["channel"]["id"],
-  ];
-
-  if ($params['type'] === 'interactive_message') {
-    $response_text = 'here';
-  }
-  // other type
-  else {
-    setUnknownText($response_text);
-  }
-
-
-
-
-
-
-
-
-
-
-
-  // $response = array(
-      // "mrkdwn" => true,
-      // "icon_url" => $icon_url,
-      // "attachments" => array(
-      //      array(
-      //         "color" => "#b0c4de",
-      //     //  "title" => $message_primary_title,
-      //         "fallback" => $message_attachment_text,
-      //         "text" => $message_attachment_text,
-      //         "mrkdwn_in" => array(
-      //             "fallback",
-      //             "text"
-      //         ),
-      //         "fields" => array(
-      //             array(
-      //                 "title" => $message_other_options_title,
-      //                 "value" => $message_other_options
-      //             )
-      //         )
-      //     )
-      // )
-  // );
-
-
-
-
-  send($response, $response_text);
-}
+//   send($response, $response_text);
+// }
