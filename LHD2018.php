@@ -101,7 +101,7 @@ if ($params) {
       foreach ($mapping as $item) {
         if (!array_key_exists($item['text'], $responded_trend)) {
           $responded_trend[$item['text']] = 1;
-          $found = true;
+          $found = $item;
           break;
         }
       }
@@ -113,13 +113,23 @@ if ($params) {
           ON DUPLICATE KEY UPDATE `conversation` = VALUES(`conversation`)"
         );
         $stmt->bind_param("sss", $channel, $user, $json);
+
         $stmt->execute();
-        $response_text = 'found one';
+
+        $csv = array_map('str_getcsv', file('data/' . $found['value']));
+
+        $response_text = $found['text'] . "- ";
+        for ($i = 1; $i <= 3; $i++) {
+          $response_text .= $i . '. ';
+          foreach ($csv[0] as $j => $col) {
+            $response_text .= $col . ': ' . $csv[$i][$j] . ' ';
+          }
+        }
+
       }
       else {
         $response_text = 'Sorry I do not have any more new trends result at this moment';
       }
-
 
     }
     else {
