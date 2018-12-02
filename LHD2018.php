@@ -72,66 +72,61 @@ if ($params) {
     if(strExists($user_msg, 'hello')) {
       $response_text = 'hello!';
     }
-    else {
+    else if (strExists($user_msg, 'top trend')) {
+      $conn = new mysqli($CONFIG['DB_SERVER'], $CONFIG['DB_ADMIN'], $CONFIG['DB_PASSWORD'], $CONFIG['DB_NAME']);
 
+      $table = $CONFIG['DB_TABLE'];
+      $stmt = $conn->prepare("SELECT `conversation` FROM `${table}` WHERE channel = ? AND user = ?");
 
-        if (strExists($user_msg, 'top trend')) {
+      $stmt->bind_param("ss", $channel, $user);
+      $stmt->execute();
+      $stmt->bind_result($result);
+      $stmt->fetch();
+      $stmt->close();
 
-        $conn = new mysqli($CONFIG['DB_SERVER'], $CONFIG['DB_ADMIN'], $CONFIG['DB_PASSWORD'], $CONFIG['DB_NAME']);
-
-        $table = $CONFIG['DB_TABLE'];
-        $stmt = $conn->prepare("SELECT `conversation` FROM `${table}` WHERE channel = ? AND user = ?");
-
-        $stmt->bind_param("ss", $channel, $user);
-        $stmt->execute();
-        $stmt->bind_result($result);
-        $stmt->fetch();
-        $stmt->close();
-
-        // json string
-        // has responsed_trend
-        if($result) {
-          $responded_trend = json_decode($result, true);
-        }
-        else {
-          $responded_trend = [];
-        }
-
-        // select options
-        $content = file_get_contents('data/mapping.json');
-
-        $mapping = json_decode($content, true);
-
-        $found = false;
-        foreach ($mapping as $item) {
-          if (!array_key_exists($item['text'], $responded_trend)) {
-            $responded_trend[$item['text']] = 1;
-            $found = true;
-            break;
-          }
-        }
-
-        if ($found) {
-          $json = json_encode($responded_trend);
-          $stmt = $conn->prepare(
-            "INSERT INTO `${table}` (`channel`, `user`, `conversation`) VALUES (?,?,?)
-            ON DUPLICATE KEY UPDATE `conversation` = VALUES(`conversation`)"
-          );
-          $stmt->bind_param("sss", $channel, $user, $json);
-          $stmt->execute();
-          $response_text = 'found one';
-        }
-        else {
-          $response_text = 'Sorry I do not have any more new trends result at this moment';
-        }
-
-
+      // json string
+      // has responsed_trend
+      if($result) {
+        $responded_trend = json_decode($result, true);
       }
       else {
-        setUnknownText($response_text);
+        $responded_trend = [];
       }
 
+      $content = file_get_contents('data/mapping.json');
+
+      $mapping = json_decode($content, true);
+
+      $found = false;
+      foreach ($mapping as $item) {
+        if (!array_key_exists($item['text'], $responded_trend)) {
+          $responded_trend[$item['text']] = 1;
+          $found = true;
+          break;
+        }
+      }
+
+      if ($found) {
+        $json = json_encode($responded_trend);
+        $stmt = $conn->prepare(
+          "INSERT INTO `${table}` (`channel`, `user`, `conversation`) VALUES (?,?,?)
+          ON DUPLICATE KEY UPDATE `conversation` = VALUES(`conversation`)"
+        );
+        $stmt->bind_param("sss", $channel, $user, $json);
+        $stmt->execute();
+        $response_text = 'found one';
+      }
+      else {
+        $response_text = 'Sorry I do not have any more new trends result at this moment';
+      }
+
+
     }
+    else {
+      setUnknownText($response_text);
+    }
+
+
   }
 
   send($response, $response_text);
