@@ -3,6 +3,9 @@ Hackathon Demo in UBC Local Hack Day 2018
 
 A Slackbot that picks a Google Trends item and tells the summary of the top three. 
 
+<img alt="Frightgeist 2018 Rankings for Halloween Costumes" src="https://kelvinau.github.io/Google-Trends-Slackbot/Frightgeist%202018%20Rankings%20for%20Halloween%20Costumes.png" width="100%"/>
+<img alt="MLB Playoofs Most searched players" src="https://kelvinau.github.io/Google-Trends-Slackbot/MLB%20Playoofs%20Most%20searched%20players.png" width="100%"/>
+
 ## Setup
 Load this repository to the request URL location, and add `config.ini` for `BOT_TOKEN`, `DB_SERVER`, `DB_ADMIN`, `DB_PASSWORD`, 
 `DB_NAME`, and `DB_TABLE`
