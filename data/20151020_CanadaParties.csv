@@ -1,5 +1,3 @@
-"Search interest in each political party by day, based on searches in Canada
-All values indexed to 100, where 100 is the max search interest",,,,,
 day,Conservative Party of Canada,New Democratic Party of Canada,Liberal Party of Canada,Green Party of Canada,Bloc Québécois
 8/1/2015,1,6,1,1,1
 8/2/2015,3,11,3,1,2

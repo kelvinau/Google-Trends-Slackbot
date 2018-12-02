@@ -44,20 +44,8 @@
     "value": "20171019_HalloweenCostumes_Frightgeist.csv"
   },
   {
-    "text": "Search interest in Trump-related news events (indexed separately) Jan. 21 - Sept. 5",
-    "value": "09252017_TrumpNewsEventsIndexedSeparately.csv"
-  },
-  {
-    "text": "Search interest in Trump-related news events (indexed together) Jan. 21 - Sept. 5",
-    "value": "09252017_TrumpNewsEventsIndexedTogether.csv"
-  },
-  {
     "text": "Search Interest in Hurricane Irma by county, last 5 days",
     "value": "20170909_HurricaneIrmaSearchInterest.csv"
-  },
-  {
-    "text": "Health care searches by Metropolitan Area in the US",
-    "value": "20170508_HealthCareSearchesUS.csv"
   },
   {
     "text": "Top searched Thanksgiving recipe in each state",
@@ -578,10 +566,6 @@
   {
     "text": "Olympic sports: Search interest by country",
     "value": "20160819_OlympicSportsByCountries.csv"
-  },
-  {
-    "text": "Alternative Medal Table base data",
-    "value": "altmedaltable2016.xlsx"
   },
   {
     "text": "Search interest in Hillary Clinton and Donald Trump by country",

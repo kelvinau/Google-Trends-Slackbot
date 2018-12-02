@@ -1,5 +1,3 @@
-"Search interest in each candidate by day, based on searches in Canada
-All values indexed to 100, where 100 is the max search interest",,,,,
 day,Gilles Duceppe,Stephen Harper,Elizabeth May,Tom Mulcair,Justin Trudeau
 8/1/2015,0,5,1,3,3
 8/2/2015,1,12,1,5,8
