@@ -1,7 +1,7 @@
 # Google Trends Slackbot
 Hackathon Demo in UBC Local Hack Day 2018
 
-A slackbot that picks a Google Trends item and tells the summary of the result. 
+A Slackbot that picks a Google Trends item and tells the summary of the top three. 
 
 ## Setup
 Load this repository to the request URL location, and add `config.ini` for `BOT_TOKEN`, `DB_SERVER`, `DB_ADMIN`, `DB_PASSWORD`, 
@@ -10,6 +10,7 @@ Load this repository to the request URL location, and add `config.ini` for `BOT_
 ## How to use
 Mention your bot and type top trend e.g.`@bot top trend`
 
+## What I learnt
 **Relying on Slackbot for the GUI is the biggest mistake**
 - Multi-line message is still not supported as of December 01, 2018 
 (earliest request started in 2015 https://twitter.com/slackhq/status/592923143309787136?lang=en)
