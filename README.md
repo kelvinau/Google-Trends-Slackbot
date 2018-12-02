@@ -10,6 +10,7 @@ A Slackbot that picks a Google Trends item and tells the summary of the top thre
 - Upload this repository to the Slack Request URL location, and add `config.ini` for `BOT_TOKEN`, `DB_SERVER`, `DB_ADMIN`, `DB_PASSWORD`, 
 `DB_NAME`, and `DB_TABLE`
 - Setup bot (https://api.slack.com/bot-users) and enable `app_mention` in `Event Subscriptions`
+- DB Table - CREATE TABLE `{DB_TABLE}` ( channel VARCHAR(256), user VARCHAR(256), conversation LONGTEXT, primary key (channel, user) );
 
 ## How to use
 Mention your bot and type top trend e.g.`@bot top trend`
