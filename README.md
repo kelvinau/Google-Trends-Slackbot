@@ -7,8 +7,9 @@ A Slackbot that picks a Google Trends item and tells the summary of the top thre
 <img alt="MLB Playoofs Most searched players" src="https://kelvinau.github.io/Google-Trends-Slackbot/MLB%20Playoofs%20Most%20searched%20players.png" width="100%"/>
 
 ## Setup
-Load this repository to the request URL location, and add `config.ini` for `BOT_TOKEN`, `DB_SERVER`, `DB_ADMIN`, `DB_PASSWORD`, 
+- Upload this repository to the Slack Request URL location, and add `config.ini` for `BOT_TOKEN`, `DB_SERVER`, `DB_ADMIN`, `DB_PASSWORD`, 
 `DB_NAME`, and `DB_TABLE`
+- Setup bot (https://api.slack.com/bot-users) and enable `app_mention` in `Event Subscriptions`
 
 ## How to use
 Mention your bot and type top trend e.g.`@bot top trend`
