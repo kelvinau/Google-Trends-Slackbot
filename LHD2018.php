@@ -69,10 +69,10 @@ if ($params) {
 
   if ($params['event']['type'] === 'app_mention') {
 
-    if(strExists($user_msg, 'hello')) {
+    if(strExists($user_msg, 'hello') || strExists($user_msg, 'hi') || strExists($user_msg, 'hey')) {
       $response_text = 'hello!';
     }
-    else if (strExists($user_msg, 'top trend')) {
+    else if (strExists($user_msg, 'top trend') || strExists($user_msg, 'toptrend')) {
       $conn = new mysqli($CONFIG['DB_SERVER'], $CONFIG['DB_ADMIN'], $CONFIG['DB_PASSWORD'], $CONFIG['DB_NAME']);
 
       $table = $CONFIG['DB_TABLE'];
@@ -118,12 +118,13 @@ if ($params) {
 
         $csv = array_map('str_getcsv', file('data/' . $found['value']));
 
-        $response_text = $found['text'] . "- ";
+        $response_text = $found['text'] . " - ";
         for ($i = 1; $i <= 3; $i++) {
-          $response_text .= $i . '. ';
+          $response_text .= $i . '. [ ';
           foreach ($csv[0] as $j => $col) {
             $response_text .= $col . ': ' . $csv[$i][$j] . ' ';
           }
+          $response_text .= ']     ';
         }
 
       }
